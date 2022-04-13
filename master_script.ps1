@@ -107,7 +107,8 @@ function ResetPassword {
   try {
     Get-ADUser -Identity $userID | Sort-Object -Property Name | Format-Table Name,SamAccountName
     try {
-      $newPassword = convertto-securestring "Citizens1" -asplaintext -force
+      # Change to desired default password
+      $newPassword = convertto-securestring "DefaultPassword" -asplaintext -force
       Set-ADAccountPassword -Identity $userID -NewPassword $newPassword -Confirm
       Set-ADUser -Identity $userID -ChangePasswordAtLogon $true
       "The account password for $userID has been reset"
@@ -129,10 +130,11 @@ function UnlockAccount {
       Write-Output ('Login Name: {0}' -f $_.SamAccountName)
       $confirmUnlock = Read-Host -Prompt "Unlock user? 1=yes, 2=no"
       if ($confirmUnlock -eq "1") {
-        Unlock-ADAccount <# -Credential bjkintner #> -Identity $_ 
+        # If required, use elevated admin username
+        Unlock-ADAccount <# -Credential AdminUser #> -Identity $_ 
         $userChoice = Read-Host -Prompt "The user has been unlocked. Do you want to reset the user password? 1=yes, 2=no"
         if ($userChoice -eq "1") {
-          $newPassword = convertto-securestring "Citizens1" -asplaintext -force
+          $newPassword = convertto-securestring "DefaultPassword" -asplaintext -force
           Set-ADAccountPassword -Identity $_ -NewPassword $newPassword
           Set-ADUser -Identity $_ -ChangePasswordAtLogon $true
           $userID = $_.SamAccountName
@@ -150,7 +152,8 @@ function UnlockAccount {
 
 function ListUsers {
 #  Get-ADUser -Server CSB | Format-Table Name,SamAccountName
-Get-ADGroupMember "Citizens Savings Bank" | Sort-Object -Property Name | Format-Table Name,SamAccountName
+#  Desired group association
+Get-ADGroupMember "Member of this group" | Sort-Object -Property Name | Format-Table Name,SamAccountName
 }
 
 function DisableUser {
@@ -215,7 +218,7 @@ $new_displayname = "$new_firstname " + "$new_middleinitial " + $new_lastname
 $full_name = Read-Host -Prompt "Enter display name"
 $fInitial = $new_firstname.Substring(0,1)
 $newUserPrincipleName = $null
-$new_password = 'Citizens1'
+$new_password = 'DefaultPassword'
 $new_description = Get-ADUser -Identity $samaccount_to_copy -Properties Description | Select-Object -ExpandProperty Description
 $new_department = Get-ADUser -Identity $samaccount_to_copy -Properties Department | Select-Object -ExpandProperty Department
 $enable_user_after_creation = $true
@@ -245,12 +248,13 @@ if ([bool] (!(Get-ADUser -Filter { SamAccountName -eq $new_samaccountname }))) {
 }
 
 #email
-$email = $new_samaccountname + "@citizenssb.com"
+$email = $new_samaccountname + "@domain.com"
 "Setting email..."
 "User email address is $email" 
+#need code here to create new email account - must work with email server client
 
 #misc fields
-$newUserPrincipleName = $new_samaccountname + "@csb.local"
+$newUserPrincipleName = $new_samaccountname + "@domain.local"
 
 
 #Set variable $user to selected user to copy
