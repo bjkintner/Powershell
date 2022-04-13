@@ -1,0 +1,1 @@
+Remove-Computer -UnjoinDomaincredential csb.local\jlmagee -PassThru -Verbose -Restart
