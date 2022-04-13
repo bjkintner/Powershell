@@ -5,12 +5,12 @@ function QueryUsers {
   # do
   # {
   #   Write-Host "What branch do you want to query?"
-  #   Write-Host "1) Branch 1 - Sullivan"
-  #   Write-Host "1) Branch 2 - Franklinton"
-  #   Write-Host "1) Branch 4 - Cumberland"
-  #   Write-Host "1) Branch 6 - Angie"
-  #   Write-Host "1) Branch 7 - Covington"
-  #   Write-Host "1) Branch 9 - Ops Center"
+  #   Write-Host "1) Branch 1"
+  #   Write-Host "1) Branch 2"
+  #   Write-Host "1) Branch 4"
+  #   Write-Host "1) Branch 6"
+  #   Write-Host "1) Branch 7"
+  #   Write-Host "1) Branch 9"
   #   Write-Host "1) Branch 411 - All branches"
   #   Write-Host "0) Quit"
   #   $result = Read-Host "Please make a selection: "
@@ -151,7 +151,7 @@ function UnlockAccount {
 
 
 function ListUsers {
-#  Get-ADUser -Server CSB | Format-Table Name,SamAccountName
+#  Get-ADUser -Server servername | Format-Table Name,SamAccountName
 #  Desired group association
 Get-ADGroupMember "Member of this group" | Sort-Object -Property Name | Format-Table Name,SamAccountName
 }
